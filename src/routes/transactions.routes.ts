@@ -4,7 +4,7 @@ import { getCustomRepository } from 'typeorm';
 import Transaction from '../models/Transaction';
 import TransactionsRepository from '../repositories/TransactionsRepository';
 import CreateTransactionService from '../services/CreateTransactionService';
-// import DeleteTransactionService from '../services/DeleteTransactionService';
+import DeleteTransactionService from '../services/DeleteTransactionService';
 // import ImportTransactionsService from '../services/ImportTransactionsService';
 
 const transactionsRouter = Router();
@@ -16,14 +16,20 @@ function getTransactionValue(transaction: Transaction): number {
 transactionsRouter.get('/', async (request, response) => {
   const transactionsRepository = getCustomRepository(TransactionsRepository);
 
-  const transactionsWithBalance = await transactionsRepository.getTransactionsWithBalance();
+  const transactions = await transactionsRepository.find({ relations: ["category"] });
 
-  return response.json(transactionsWithBalance);
+  const balance = await transactionsRepository.getBalance();
+
+  return response.json({
+    transactions,
+    balance,
+  });
 });
 
 transactionsRouter.post('/', async (request, response) => {
-  const transactionsRepository = getCustomRepository(TransactionsRepository);
   const {title, value, type, category} = request.body;
+
+  // const transactionsRepository = getCustomRepository(TransactionsRepository);
 
   const createTransaction = new CreateTransactionService();
 
@@ -38,7 +44,13 @@ transactionsRouter.post('/', async (request, response) => {
 });
 
 transactionsRouter.delete('/:id', async (request, response) => {
-  // TODO
+  const {id} = request.params;
+
+  const deleteTransactionService = new DeleteTransactionService();
+
+  await deleteTransactionService.execute (id);
+
+  return response.status(204).send();
 });
 
 transactionsRouter.post('/import', async (request, response) => {

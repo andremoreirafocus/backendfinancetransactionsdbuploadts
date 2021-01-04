@@ -8,15 +8,10 @@ interface Balance {
   total: number;
 }
 
-interface Result {
-  transactions: Transaction[];
-  balance: Balance;
-}
-
 @EntityRepository(Transaction)
 class TransactionsRepository extends Repository<Transaction> {
   // public async getBalance(): Promise<Balance> {
-  public async getTransactionsWithBalance(): Promise<Result> {
+  public async getBalance(): Promise<Balance> {
 
     const transactions = await this.find({ relations: ["category"] });
 
@@ -36,11 +31,7 @@ class TransactionsRepository extends Repository<Transaction> {
       total: incomeTotal - outcomeTotal,
     }
 
-    return {
-      transactions,
-      balance,
-    }
-
+    return balance;
   }
 }
 

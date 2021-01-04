@@ -49,7 +49,7 @@ export class CreateTransactions1609219051282 implements MigrationInterface {
           columnNames: ['category_id'],
           referencedColumnNames: ['id'],
           referencedTableName: 'categories',
-          onDelete: 'SET NULL',
+          onDelete: 'CASCADE',
           onUpdate: 'CASCADE',
         }));
     }

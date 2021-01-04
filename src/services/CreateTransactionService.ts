@@ -1,4 +1,4 @@
-// import AppError from '../errors/AppError';
+import AppError from '../errors/AppError';
 
 import { getCustomRepository, getRepository } from 'typeorm';
 
@@ -16,6 +16,12 @@ interface Request {
 class CreateTransactionService {
   public async execute({title, value, type, category}: Request): Promise<Transaction> {
     const transactionsRepository = getCustomRepository(TransactionsRepository);
+
+    const balance = await transactionsRepository.getBalance();
+
+    if ((type === 'outcome') && (balance.total - value < 0)) {
+      throw new AppError('Insufficient funds for the requested outcome!!!');
+    }
 
     const categoriesRepository = getRepository(Category);
 
@@ -39,7 +45,7 @@ class CreateTransactionService {
       title,
       value,
       type,
-      category: foundCategory,
+      category: itemCategory,
     });
 
     await transactionsRepository.save(transaction);
