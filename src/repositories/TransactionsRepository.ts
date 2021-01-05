@@ -13,7 +13,8 @@ class TransactionsRepository extends Repository<Transaction> {
   // public async getBalance(): Promise<Balance> {
   public async getBalance(): Promise<Balance> {
 
-    const transactions = await this.find({ relations: ["category_id"] });
+    // const transactions = await this.find({ relations: ["category_id"] });
+    const transactions = await this.find();
 
     console.log(transactions);
 
