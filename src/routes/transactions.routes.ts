@@ -16,7 +16,7 @@ function getTransactionValue(transaction: Transaction): number {
 transactionsRouter.get('/', async (request, response) => {
   const transactionsRepository = getCustomRepository(TransactionsRepository);
 
-  const transactions = await transactionsRepository.find({ relations: ["category"] });
+  const transactions = await transactionsRepository.find({ relations: ["category_id"] });
 
   const balance = await transactionsRepository.getBalance();
 
